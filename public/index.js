@@ -23,38 +23,74 @@ const parseDate = (date) => {
 const parsePrice = (p) => (p * 1.0) / 100.0;
 /* helper functions (parseDate, parsePrice)*/
 
-/* useful component (Item and loader)*/
-const Item = ({ face, price, date, size }) => (
-  <div className="col-12 col-sm-3 mb-4">
-    <div className="my-card p-4">
-      <p className="text-center">
-        <span className="font-weight-bold" style={{ fontSize: size }}>
-          {face}
-        </span>
-      </p>
-      <div className="d-flex flex-row justify-content-between align-items-center">
-        <div>
-          <span className="font-weight-bold text-primary">
-            ${parsePrice(price)}
-          </span>
+/* useful component (Item(Ads is included here) and loader)*/
+const Item = ({ face, price, date, size, ads }) =>
+  ads ? (
+    <React.Fragment>
+      <div className="col-12 col-sm-3 mb-4">
+        <div className="my-card p-4">
+          <p className="text-center">
+            <span className="font-weight-bold" style={{ fontSize: size }}>
+              {face}
+            </span>
+          </p>
+          <div className="d-flex flex-row justify-content-between align-items-center">
+            <div>
+              <span className="font-weight-bold text-primary">
+                ${parsePrice(price)}
+              </span>
+            </div>
+            <div>
+              <span
+                className=" font-italic font-weight-bold"
+                style={{ fontSize: "0.8rem" }}
+              >
+                {parseDate(date)}
+              </span>
+            </div>
+          </div>
         </div>
+      </div>
+      <div className="col-12 text-center justify-content-center card p-2  mb-4">
+        <h5 className="text-center"> Our sponsors</h5>
         <div>
-          <span
-            className=" font-italic font-weight-bold"
-            style={{ fontSize: "0.8rem" }}
-          >
-            {parseDate(date)}
+          <img className="img-fluid" alt="" src={`/ads/?r=${ads}`} />
+        </div>
+      </div>
+    </React.Fragment>
+  ) : (
+    <div className="col-12 col-sm-3 mb-4">
+      <div className="my-card p-4">
+        <p className="text-center">
+          <span className="font-weight-bold" style={{ fontSize: size }}>
+            {face}
           </span>
+        </p>
+        <div className="d-flex flex-row justify-content-between align-items-center">
+          <div>
+            <span className="font-weight-bold text-primary">
+              ${parsePrice(price)}
+            </span>
+          </div>
+          <div>
+            <span
+              className=" font-italic font-weight-bold"
+              style={{ fontSize: "0.8rem" }}
+            >
+              {parseDate(date)}
+            </span>
+          </div>
         </div>
       </div>
     </div>
-  </div>
-);
+  );
+
 const Loader = () => (
-  <div className="w-100 pr-3 pl-3"><div className="alert alert-primary  mb-3 text-center ">
-    {" "}
-    <span className="font-weight-bold blink-me">Loading ...</span>
-  </div>
+  <div className="w-100 pr-3 pl-3">
+    <div className="alert alert-primary  mb-3 text-center ">
+      {" "}
+      <span className="font-weight-bold blink-me">Loading ...</span>
+    </div>
   </div>
 );
 /* useful component */
@@ -63,29 +99,30 @@ const Loader = () => (
 class App extends React.Component {
   state = {
     data: [],
-    newData:[1], // we are going to save here the newest fetching data, we declared it with one element to avoit end of catalogue to be displayed
+    newData: [1], // we are going to save here the newest fetching data, we declared it with one element to avoit end of catalogue to be displayed
     loading: false,
     sorts: [false, false, false], // to handle sorting
     currentPage: 1,
     sort: "",
-    flag:true, // am i able to start fetching?,
-    ads: []  // to handle ads
+    flag: true, // am i able to start fetching?,
+    ads: [], // to handle ads
   };
   constructor(props) {
     super(props);
     this.container = React.createRef();
   }
   // to generate a random number which is not in the ads array yet
-  _uniqueRandom = ()=>{
-   const r= Math.floor(Math.random()*1000)
-   if(ads.includes(r)){
-       this._uniqueRandom()
-   }
-   return r
-  }
+  _uniqueRandom = () => {
+    const r = Math.floor(Math.random() * 1000);
+    if (this.state.ads.includes(r)) {
+      this._uniqueRandom();
+    }
+    return r;
+  };
   // we use this function to query the api
   query = async (page = 1, sort = this.state.sort) => {
     this.setState({ loading: true });
+    console.log("fetch");
     let result;
     sort === ""
       ? (result = await fetch(`/api/products?_page=${page}&_limit=20`))
@@ -93,28 +130,28 @@ class App extends React.Component {
           `/api/products?_page=${page}&_limit=20&_sort=${sort}`
         ));
     const data = await result.json();
-    const r = this._uniqueRandom() 
-    this.setState({ loading: false, ads:[...this.state.ads,r] });
+    const r = this._uniqueRandom();
+    this.setState({ loading: false, ads: [...this.state.ads, r] });
     return data;
   };
 
   async componentDidMount() {
     window.addEventListener("scroll", this.handleScroll, true);
     const data = await this.query();
-    this.setState({ data });
+    this.setState({ data, newData: data });
   }
-  
+
   componentWillUnmount() {
-    window.removeEventListener('scroll', this.handleScroll);
+    window.removeEventListener("scroll", this.handleScroll);
   }
-    
+
   // we use this function to sort by price,size and id
   _sort = async (index) => {
     this.setState({ sorts: this.state.sorts.map((sort, i) => index === i) });
     const sort =
       index === 0 ? "size" : index === 1 ? "price" : index === 2 ? "id" : "id";
     const data = await this.query(1, sort);
-    this.setState({ data,sort });
+    this.setState({ data, sort });
   };
 
   /* for automatically load more data on scroll, we use debounce to avoid multiple 
@@ -122,23 +159,30 @@ class App extends React.Component {
    in a short timeframe(<2s)
    */
   handleScroll = _.debounce(async () => {
-      let data = []
-      // before we arrive at the bottom(around the half) of the screen we start fetching the data
-      console.log(document.body.offsetHeight-window.scrollY,window.innerHeight)
-      if(((document.body.offsetHeight-window.scrollY)<= window.innerHeight*2)&&this.state.newData.length&&this.state.flag)
-      {
-        data = await this.query(this.state.currentPage+1,this.state.sort)
-        console.log('fetch')
-        this.setState({flag:false})
-      }
-    // when we arrive at the bottom of the screen we set the queried data
-    if(((window.innerHeight + window.scrollY) == (document.body.offsetHeight))&&this.state.newData.length){  
-      this.setState({newData: data,data:[...this.state.data,...data],currentPage: this.state.currentPage+1,flag:true})
+    let data = [];
+    // before we arrive at the bottom(around the half) of the screen we start fetching the data
+    if (
+      document.body.offsetHeight - window.scrollY <= window.innerHeight * 2 &&
+      this.state.newData.length &&
+      this.state.flag
+    ) {
+      data = await this.query(this.state.currentPage + 1, this.state.sort);
+      
+      this.setState({ flag: false ,newData:data});
     }
-  },500);
+    // when we arrive at the bottom of the screen we set the queried data
+    if (window.innerHeight + window.scrollY == document.body.offsetHeight) 
+     {
+      this.setState({
+        data: [...this.state.data, ...this.state.newData],
+        currentPage: this.state.currentPage + 1,
+        flag: true,
+      });
+    }
+  }, 200);
 
   render() {
-    const { data, loading, sorts,newData } = this.state;
+    const { data, loading, sorts, newData } = this.state;
     return (
       <div>
         <div className=" my-card p-3 mb-5 d-flex flex-column justify-content-center align-items-center">
@@ -150,8 +194,8 @@ class App extends React.Component {
               }`}
               onClick={() => this._sort(0)}
             >
-              <i class="fas fa-sort-amount-up"></i>{" "}
-              Size&nbsp; <i className="fa fa-chevron-up text-light"></i>
+              <i class="fas fa-sort-amount-up"></i> Size&nbsp;{" "}
+              <i className="fa fa-chevron-up text-light"></i>
             </button>
             &nbsp;&nbsp;&nbsp;&nbsp;{" "}
             <button
@@ -160,7 +204,7 @@ class App extends React.Component {
               }`}
               onClick={() => this._sort(1)}
             >
-              <i className="fa fa-dollar-sign"></i> {" "}Price{" "}
+              <i className="fa fa-dollar-sign"></i> Price{" "}
               <i className="fa fa-chevron-up text-light"></i>
             </button>
             &nbsp;&nbsp;&nbsp;&nbsp;
@@ -169,37 +213,34 @@ class App extends React.Component {
                 sorts[2] ? "btn-primary" : "btn-secondary"
               }`}
               onClick={() => this._sort(2)}
-            ><i class="fa fa-sort-numeric-up"></i>{" "}
-              Id&nbsp;&nbsp;&nbsp;&nbsp;
+            >
+              <i class="fa fa-sort-numeric-up"></i> Id&nbsp;&nbsp;&nbsp;&nbsp;
               <i className="fa fa-chevron-up text-light"></i>
             </button>
           </div>
         </div>
-       {/* we are displaying produtcs here */}
+        {/* we are displaying produtcs here */}
         <div className="row" ref={this.container}>
-          {data.map((item) => (
+          {data.map((item, i) => (
             <Item
               face={item.face}
               price={item.price}
               date={item.date}
               size={item.size}
+              ads={(i+1)%20 ===0&&i>0 ? this._uniqueRandom() : false}
             />
           ))}
-          
+
           {loading && <Loader />}
-          {newData.length === 0 && (
-            <div className="w-100 pr-3 pl-3">
+        </div>
+
+        {newData.length === 0 && (
+          <div className="w-100 pr-3 pl-3">
             <div className="alert mt-2 mt-2 alert-danger  text-center font-weight-bold">
               ~ end of catalogue ~
             </div>
-            </div>
-          )}
-        </div>
-        
-        {/* we are displaying ads here */}
-        <div className="row text-center">
-            <img className="img-fluid" alt="" src={`/ads/?r=${currentPage}`}
-        </div>
+          </div>
+        )}
       </div>
     );
   }
