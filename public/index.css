@@ -39,3 +39,6 @@ body{
       opacity: 0;
     }
   }
+.sort-btn{
+    width: 150px;
+}
