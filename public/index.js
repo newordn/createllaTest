@@ -122,7 +122,6 @@ class App extends React.Component {
   // we use this function to query the api
   query = async (page = 1, sort = this.state.sort) => {
     this.setState({ loading: true });
-    console.log("fetch");
     let result;
     sort === ""
       ? (result = await fetch(`/api/products?_page=${page}&_limit=20`))
