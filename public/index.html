@@ -2,25 +2,42 @@
 <html>
     <head>
         <link rel="stylesheet" href="./index.css"/>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
         <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
         <link rel="icon" href="./favicon.png" />
         <title>Products Grid</title>
+        <script crossorigin src="https://unpkg.com/react@16/umd/react.production.min.js"></script>
+        <script crossorigin src="https://unpkg.com/react-dom@16/umd/react-dom.production.min.js"></script>
     </head>
     <body>
         <header class="header">
-            <h1>Products Grid</h1>
+            <h1 class="mb-5">Products Grid</h1>
 
-            <p>Here you're sure to find a bargain on some of the finest ascii available to purchase.</p>
-            <p>Be sure to peruse our selection of ascii faces in an exciting range of sizes and prices.</p>
+            <p class="font-weight-bold mb-3">Here you're sure to find a bargain on some of the finest ascii available to purchase.</p>
+            <p class="font-weight-bold mb-3">Be sure to peruse our selection of ascii faces in an exciting range of sizes and prices.</p>
             <p><a href="#main"><i class="fa fa-chevron-circle-down fa-5x text-secondary-color"></i></a></p>
            
         </header>
-        <main id="main">
-            <p>But first, a word from our sponsors:</p> <script>document.write('<img class="ad" src="/ads/?r=' + Math.floor(Math.random()*1000) + '"/>');</script>
-            <section class="products">
-                ... products go here ...
+        <main id="main" class="container pt-5 pb-5">
+            <div class="d-flex justify-content-center align-items-center mb-3 my-card p-3 mb-5">
+                <button class="btn btn-secondary">Size&nbsp; <i class="fa fa-chevron-down text-light"></i></button>
+               &nbsp;&nbsp;&nbsp;&nbsp; <button class="btn btn-secondary">Price <i class="fa fa-chevron-down text-light"></i></button>
+               &nbsp;&nbsp;&nbsp;&nbsp;<button class="btn btn-secondary">Id&nbsp;&nbsp;&nbsp;<i class="fa fa-chevron-down text-light"></i></button>
+            </div>
+            <section class="products row">
+                <div class="col-12 col-sm-3">
+                    <div class="my-card p-4">
+                        <p class="text-center"><span class="font-weight-bold">( .-. )</span></p>
+                        <div class="d-flex flex-row justify-content-between align-items-center">
+                            <div><span class="font-weight-bold text-primary">$986</span></div>
+                            <div><span class=" font-italic">3 days ago</span></div>
+                        </div>
+                    </div>
+                </div>
             </section>
+            <!-- <p>But first, a word from our sponsors:</p> <script>document.write('<img class="ad" src="/ads/?r=' + Math.floor(Math.random()*1000) + '"/>');</script>
+             -->
         </main>
-       
+    <script src="./index.js"></script>
     </body>
 </html>

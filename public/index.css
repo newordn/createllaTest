@@ -17,3 +17,11 @@ body{
     background-color: rgb(70,70,70);
     background-blend-mode: multiply;
 }
+.my-card{
+    background-color: white;
+    box-shadow: 0px 0px 10px 10px rgb(210,210,210);
+    z-index: 10000;
+}
+.text-gray{
+    color:gray;
+}
