@@ -8,6 +8,7 @@
         <title>Products Grid</title>
         <script crossorigin src="https://unpkg.com/react@16/umd/react.production.min.js"></script>
         <script crossorigin src="https://unpkg.com/react-dom@16/umd/react-dom.production.min.js"></script>
+        <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
     </head>
     <body>
         <header class="header">
@@ -19,25 +20,17 @@
            
         </header>
         <main id="main" class="container pt-5 pb-5">
-            <div class="d-flex justify-content-center align-items-center mb-3 my-card p-3 mb-5">
+            <div class="  my-card d-flex justify-content-center align-items-center mb-3 flex-row p-3 mb-5">
                 <button class="btn btn-secondary">Size&nbsp; <i class="fa fa-chevron-down text-light"></i></button>
                &nbsp;&nbsp;&nbsp;&nbsp; <button class="btn btn-secondary">Price <i class="fa fa-chevron-down text-light"></i></button>
-               &nbsp;&nbsp;&nbsp;&nbsp;<button class="btn btn-secondary">Id&nbsp;&nbsp;&nbsp;<i class="fa fa-chevron-down text-light"></i></button>
+               &nbsp;&nbsp;&nbsp;&nbsp;<button class="btn btn-secondary">Id&nbsp;&nbsp;&nbsp;&nbsp;<i class="fa fa-chevron-down text-light"></i></button>
             </div>
-            <section class="products row">
-                <div class="col-12 col-sm-3">
-                    <div class="my-card p-4">
-                        <p class="text-center"><span class="font-weight-bold">( .-. )</span></p>
-                        <div class="d-flex flex-row justify-content-between align-items-center">
-                            <div><span class="font-weight-bold text-primary">$986</span></div>
-                            <div><span class=" font-italic">3 days ago</span></div>
-                        </div>
-                    </div>
-                </div>
+            <section class="products" id="root">
+                
             </section>
             <!-- <p>But first, a word from our sponsors:</p> <script>document.write('<img class="ad" src="/ads/?r=' + Math.floor(Math.random()*1000) + '"/>');</script>
              -->
         </main>
-    <script src="./index.js"></script>
+        <script src="index.js" type="text/babel"></script>
     </body>
 </html>
