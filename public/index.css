@@ -1,0 +1,19 @@
+body{
+    margin:0px !important;
+}
+.text-secondary-color{
+    color: #00afdf;
+}
+.header{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    width: 100vw;
+    max-width: 100%;
+    color:white;
+    background: url("./imgs/background.jpg") center/cover no-repeat;
+    background-color: rgb(70,70,70);
+    background-blend-mode: multiply;
+}
