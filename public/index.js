@@ -1,16 +1,23 @@
 const parseDate = (date) => {
+  // we are getting the ellipsed time
   const oldDate = Date.parse(date);
   const nowDate = Date.now();
-  const sevenDaysMill = 604800;
+  const sevenDaysMill = 604800000;
   const ellipsedTime = nowDate - oldDate;
+  console.log(ellipsedTime)
+  // we check if is it older than 7 days, if it's we just diplaying the pretty formated date
   if (ellipsedTime > sevenDaysMill) {
     const d = new Date(oldDate);
     const year = d.getFullYear();
-    const month = d.getMonth() < 10 ? `0${d.getMonth()}` : d.getMonth();
+    const m = d.getMonth() + 1
+    const month =  m < 10 ? `0${m}` : m;
     const days = d.getDate() < 10 ? `0${d.getDate()}` : d.getDate();
     return `${year}-${month}-${days}`;
-  } else {
-    const day = ellipsedTime / sevenDaysMill;
+  }
+  // if not, we calculate the number of days into ellipsedTime 
+  else 
+  {
+    const day = Math.round(ellipsedTime / 86400000);
     return `${day} ${day > 1 ? "days" : "day"} ago`;
   }
 };
@@ -53,48 +60,60 @@ class App extends React.Component {
   state = {
     data: [],
     loading: false,
-    sorts : [false,false,false]
+    sorts: [false, false, false],
   };
-  query = async (page=1,sort="")=>{
-    this.setState({loading:true})
-    let result 
-     sort===""?result = await fetch(`/api/products?_page=${page}&_limit=20`)
-     :
-     result = await fetch(`/api/products?_page=${page}&_limit=20&_sort=${sort}`)
-    const data = await result.json()
-    this.setState({  loading: false });
-    return data
-  }
+  query = async (page = 1, sort = "") => {
+    this.setState({ loading: true });
+    let result;
+    sort === ""
+      ? (result = await fetch(`/api/products?_page=${page}&_limit=20`))
+      : (result = await fetch(
+          `/api/products?_page=${page}&_limit=20&_sort=${sort}`
+        ));
+    const data = await result.json();
+    this.setState({ loading: false });
+    return data;
+  };
   async componentDidMount() {
-    const data = await this.query()
-   this.setState({data}) 
+    const data = await this.query();
+    this.setState({ data });
   }
-  _sort = async (index)=>{
-      this.setState({sorts:this.state.sorts.map((sort,i)=>index===i)})
-      const sort = index===0?'size':index===1?'price':index===2?'id':'id'
-      const data = await this.query(1,sort)
-      this.setState({data}) 
-  }
+  _sort = async (index) => {
+    this.setState({ sorts: this.state.sorts.map((sort, i) => index === i) });
+    const sort =
+      index === 0 ? "size" : index === 1 ? "price" : index === 2 ? "id" : "id";
+    const data = await this.query(1, sort);
+    this.setState({ data });
+  };
   render() {
-    const { data, loading ,sorts} = this.state;
+    const { data, loading, sorts } = this.state;
     return (
       <div>
         <div className=" my-card d-flex justify-content-center align-items-center mb-3 flex-row p-3 mb-5">
-          <button className={`btn ${sorts[0]?"btn-primary":"btn-secondary"}`} onClick={()=>this._sort(0)}>
+          <button
+            className={`btn ${sorts[0] ? "btn-primary" : "btn-secondary"}`}
+            onClick={() => this._sort(0)}
+          >
             Size&nbsp; <i className="fa fa-chevron-up text-light"></i>
           </button>
           &nbsp;&nbsp;&nbsp;&nbsp;{" "}
-          <button className={`btn ${sorts[1]?"btn-primary":"btn-secondary"}`} onClick={()=>this._sort(1)}>
+          <button
+            className={`btn ${sorts[1] ? "btn-primary" : "btn-secondary"}`}
+            onClick={() => this._sort(1)}
+          >
             Price <i className="fa fa-chevron-up text-light"></i>
           </button>
           &nbsp;&nbsp;&nbsp;&nbsp;
-          <button className={`btn ${sorts[2]?"btn-primary":"btn-secondary"}`} onClick={()=>this._sort(2)}>
+          <button
+            className={`btn ${sorts[2] ? "btn-primary" : "btn-secondary"}`}
+            onClick={() => this._sort(2)}
+          >
             Id&nbsp;&nbsp;&nbsp;&nbsp;
             <i className="fa fa-chevron-up text-light"></i>
           </button>
         </div>
         <div className="row">
-        {loading && <Loader />}
+          {loading && <Loader />}
           {data.map((item) => (
             <Item
               face={item.face}
@@ -103,7 +122,6 @@ class App extends React.Component {
               size={item.size}
             />
           ))}
-          
         </div>
       </div>
     );
